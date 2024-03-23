@@ -1,23 +1,28 @@
-import logo from './logo.svg';
 import './App.css';
+import React, {useEffect} from 'react'
+import Instascan from 'instascan'
 
 function App() {
+  useEffect(() => {
+    const scanner = new Instascan.Scanner({ video: document.getElementById('preview')})
+    scanner.addListener('scan', function (content) {
+      alert('Skenirani sadrzaj: ' + content)
+    });
+    Instascan.Camera.getCameras().then(cameras => {
+      if(cameras.length > 0) {
+        scanner.start(cameras[0])
+      } else {
+        console.log('Nema podataka sa kamera.');
+      }
+    }).catch(e => {
+      console.log(`Greska ${e}`);
+    })
+  }, [])
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <video id='preview'></video>
     </div>
   );
 }
